@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+/*
+  Oot Weel design tokens
+  - Paper + ink base, one accent (jade, sampled from the logo's green).
+  - Radius rule: interactive = full pill, cards/sheets = 20px, photos inside cards = 14px.
+*/
+@theme {
+  --color-paper: #f1ece3;
+  --color-paper-2: #e6dfd1;
+  --color-tracing: rgb(251 249 244 / 0.62);
+  --color-ink: #131512;
+  --color-ink-2: #1d201c;
+  --color-ink-soft: #55574f;
+  --color-ink-mute-on-dark: #a9aa9f;
+  --color-jade: #136b3a;
+  --color-jade-deep: #0e5029;
+  --color-jade-bright: #3dba6e;
+  --color-line: rgb(19 21 18 / 0.14);
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 20px;
+  --radius-photo: 14px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  section[id] {
+    scroll-margin-top: 84px;
+  }
+
+  ::selection {
+    background: var(--color-jade);
+    color: #faf8f3;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-jade);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: var(--color-jade-bright);
+  }
+}
+
+@layer components {
+  /* Display type: confident, tight tracking that scales with size. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 650;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Paper grain: fixed, pointer-less, never on scrolling containers. */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.07  0 0 0 0 0.08  0 0 0 0 0.07  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* Tracing paper sheet: translucent with faint drafting grid. */
+  .tracing {
+    background-color: var(--color-tracing);
+    background-image:
+      linear-gradient(rgb(19 21 18 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(19 21 18 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Ruled sketchbook sheet. */
+  .ruled {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 31px,
+      rgb(19 21 18 / 0.06) 31px 32px
+    );
+  }
+
+  /* Visible, easy-to-find placeholder for facts the studio still needs to provide. */
+  .ph {
+    display: inline;
+    padding: 0.05em 0.35em;
+    border-radius: 6px;
+    border: 1px dashed currentColor;
+    background: rgb(19 107 58 / 0.08);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: min(0.82em, 0.9375rem);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+  Hero intro runs on CSS keyframes so it starts at first paint, before React hydrates.
+  Nothing here hides the hero for long: the subtext only moves (no fade), so it is readable immediately.
+*/
+@keyframes ow-word {
+  from { transform: translateY(105%); }
+  to { transform: none; }
+}
+@keyframes ow-rise {
+  from { transform: translateY(18px); }
+  to { transform: none; }
+}
+@keyframes ow-settle {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ow-zoom {
+  from { transform: scale(1.12); }
+  to { transform: none; }
+}
+@keyframes ow-sheet-l {
+  0% { transform: translateX(-102%); }
+  34%, 56% { transform: none; }
+  100% { transform: translateX(104%); }
+}
+@keyframes ow-sheet-r {
+  0% { transform: translateX(104%) rotate(2.5deg); }
+  34%, 56% { transform: rotate(1.2deg); }
+  100% { transform: translateX(-108%) rotate(-1deg); }
+}
+@keyframes ow-sheet-b {
+  0% { transform: translateY(104%) rotate(-1.5deg); }
+  34%, 56% { transform: rotate(-0.6deg); }
+  100% { transform: translateY(-110%) rotate(0.5deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .a-word { animation: ow-word 0.85s var(--ease-out-expo) both; }
+  .a-rise { animation: ow-rise 0.9s var(--ease-out-expo) both; }
+  .a-settle { animation: ow-settle 0.8s cubic-bezier(0.34, 1.4, 0.5, 1) both; }
+  .a-zoom { animation: ow-zoom 1.8s var(--ease-out-expo) both; }
+  .a-sheet { animation-duration: 1.2s; animation-fill-mode: both; animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
+  .a-sheet-l { animation-name: ow-sheet-l; }
+  .a-sheet-r { animation-name: ow-sheet-r; animation-delay: 0.07s; }
+  .a-sheet-b { animation-name: ow-sheet-b; animation-delay: 0.14s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-sheets { display: none; }
+}
